@@ -1,0 +1,23 @@
+As we have to starta online marketing for similar products irrespective of their segments.
+The problem statement ->
+1. Identify the factors to predict units sold for products. - supervised
+2. Identify which product will sellmore than 1000 products. - supervised
+3. Create a new age bundled online marketing stratergy.     - unsupervised
+
+Ensemble/Ensembling ->
+Combining mutiple machine learning algorithms to get better accuracy, efficiency and robustness.
+Types ->
+1.Homogenuous ensemble models   -> Only one model is used : Techniques like bagging and boosting.
+2.Heterogenuous ensemble models -> More than 1 model      : Techniques like voting, stacking, blending
+
+Homogenuous ensemble models -> Same models -> Bagging 
+Bagging -> Bootstrap + Aggregation
+Bootstrap -> Create mutiple samples of the same dataset with replacament -> 
+used to creates full diversity of the main dataset -> Randomness(each subset is Unique due to randomness) + variability( ensures each model captures diverse information)
+
+Aggregation -> 
+1. Classification : Mode of Predictions
+2. Regression     : Mean of Predictions
+
+How bagging battles overfitting -> many decision trees algo for each partial dataset then the average of that helps in getting a good estimate ruling out overfitting.
+Best for situation like 1. High variance , 2. Low Bias
