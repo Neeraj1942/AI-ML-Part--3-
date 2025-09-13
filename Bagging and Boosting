@@ -113,5 +113,94 @@ Difference between BaggingClassifier and RandomForestClassifier -> Random forest
 where as in bagging we have to mention it to select random features in the attributes.
 
 2 key features of RandomForest which are not part of the decision tree ->
+1. n_estimators      -> Estimates how many individual decision trees will be build in the forest.
+2. out_of_bag scores -> Build in, to estimate the exact(optimum) number of trees.
 
+In general, out of 100% , 33% of the samples(i.e features) are not selected by the decision trees.(these are the out of bag samples)
+
+Note : To access a attribute in a function we _ at the end.
+Example -> clf = RandomForestClassifier(oob_score=True, random_state=42, n_jobs=-1) 
+Now to access oob_score we use -> clf.oob_score_, or clf.n_jobs_ .....
+
+Note : clf.set_params(n_estimators=n_estimators, max_depth=20, min_samples_leaf=10) ->
+set_params() is used to set the hyper parameters of the model after being created!
+
+We use a loop to iterate of over the n_samples created and plot the grapgh for both 
+oob_scores and train_score(train_score = clf.score(X_train, y_train)) -> to get a graph to better understand how the train works with oob_score.
+
+Note : in strings ->
+1. (<15) -> print(f"{n_estimators:<15})
+< → Left-align the value.
+15 → Use a total width of 15 characters.
+
+2.(<15.4f) -> print(f"{train_score:<15.4f})
+< → Left-align the number.
+15.4f → It's a float with:
+15 total characters wide,
+4 digits after the decimal point.
+
+3. (.4f) -> print(f"{oob_score_val:.4f})
+No alignment or width, just format as:
+A float with 4 digits after the decimal point.
+
+Bagging regression model - >
+# Create a Bagging Regressor with Decision Tree as base
+bagging_regressor = BaggingRegressor(
+    base_estimator=DecisionTreeRegressor(max_depth=9, min_samples_leaf=30),
+    n_estimators=50,
+    random_state=42
+)
+
+# Fit the Bagging regressor on the training data
+bagging_regressor.fit(X_train, y_train)
+
+r2_score -> used or regression models:
+Metric	                                      Task Type	                                                Purpose	Output Range
+r2_score	    Regression	Measures how well predicted values fit the actual data (goodness of fit)	 -∞ to 1 (1 = perfect)
+f1_score	    Classification	Balances precision and recall, especially for imbalanced classes          0 to 1 (1 = perfect)
+
+Example ->
+from sklearn.metrics import r2_score
+
+# Actual values (true house prices in thousands)
+y_true = [100, 200, 300, 400, 500]
+# Predicted values from a regression model
+y_pred = [110, 190, 290, 410, 490]
+# Calculate R² score
+r2 = r2_score(y_true, y_pred)
+print(f"R2 Score: {r2:.2f}")
+
+Output ->
+R2 Score: -1.50
+
+math behind it->
+y_true = [100, 200, 300, 400, 500]
+y_pred = [110, 190, 290, 410, 490]
+Average true value: 300
+
+(100 - 110)² = 100
+(200 - 190)² = 100
+(300 - 290)² = 100
+(400 - 410)² = 100
+(500 - 490)² = 100
+Total errors = 500
+
+Distance from average (difference squared):
+
+(100 - 300)² = 40000
+(200 - 300)² = 10000
+(300 - 300)² = 0
+(400 - 300)² = 10000
+(500 - 300)² = 40000
+Total distance = 100000
+
+R² = 1 − (500 ÷ 100000) = 1 − 0.005 = 0.995
+
+Prediction explanation ->
+R² close to 1 means predictions are very close to true values.
+R² close to 0 means model is not better than just guessing the average.
+(If R² is close to 0, it means your model’s predictions are about as good as just guessing the average of all the actual values.)
+
+
+Boosting ->
 
