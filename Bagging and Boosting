@@ -21,3 +21,97 @@ Aggregation ->
 
 How bagging battles overfitting -> many decision trees algo for each partial dataset then the average of that helps in getting a good estimate ruling out overfitting.
 Best for situation like 1. High variance , 2. Low Bias
+
+Bagging - Random Forest implementation ->
+train_df.values -> .values gives a NumPy array, but if your DataFrame has mixed data types, pandas will upcast to a common type
+    .to_numpy() ->  better use case is using .to_numpy()
+Both give the same output ->
+[3260.0, 24.70360480640855, 'Makeup', ..., 0.0, 0.0, 1],
+       [3729.0, 22.22651448639157, 'Makeup', ..., 0.0, 0.0, 1],
+       [2675.0, 25.57446808510638, 'Makeup', ..., 0.0, 0.0, 1],
+      [375.0, 43.64347826086956, 'Skincare', ..., 7108033.0, 2.0, 0]],
+      dtype=object)
+
+The we calculate the Normal Case for the rating, (Rating - 1,2,3,4,5) - > Rating(4,5) / Rating (1,2)
+if Rating(1,2,3,4) -> 0 then we replace the value with 0.0
+if Rating(1,2)     -> 0 then we replace the value with -99999
+(Storing all the normal values in rating ratio) : 
+The case where rating is -9999-> we replace that with the max rating of that max of the rating_ratio loop.
+Then we create a coloumn -> 'Good_By_Bad_Rating' -> add the Rating_Ratio to it.
+Then drop all the rating coloumns(1,2,3,4,5) 
+
+Same for training and validation.
+
+One-hot encoding ->
+train_df = pd.get_dummies(train_df, columns = ['Segment'], prefix = 'Segment', drop_first = True)
+pd.get_dummies() -> Converts categorical variables into one-hot encoded columns — creating new columns with 0s and 1s indicating the presence of each category.
+
+columns=['Segment'] -> Specifies that the Segment column in train_df should be transformed into dummy variables.
+
+prefix='Segment' -> Adds the prefix "Segment" to the new dummy column names, so the new columns will look like "Segment_<category>".
+                    This makes it clear which original column the new dummy columns come from.
+
+drop_first=True -> Drops the first dummy column created to avoid multicollinearity (called the dummy variable trap).
+                   This means if your Segment column has 3 categories, only 2 dummy columns will be created, and the dropped category is the baseline.
+
+Result -> The original Segment column is removed and replaced by these new dummy columns, which can now be used as numerical features for machine learning models.
+
+Product  	Segment	  Units_sold
+P1	      Makeup	    100
+P2	      Skincare	  200
+P3	      Haircare	  150
+P4	      Makeup	    120
+
+Product	Units_sold	Segment_Skincare	Segment_Haircare
+P1	      100            	0	                0
+P2	      200	            1	                0
+P3	      150	            0	                1
+P4	      120	            0	                0
+
+in f1_score -> {round(f1*100, 2)}%" -> mupliplying by 100 for percentage, then rounding of to 2 decimal places
+
+as we got f1_score on training dataset as 100% , the model is overfitting to help to avoid this we,
+model = DecisionTreeClassifier(max_depth=20, min_samples_leaf=10, random_state=42)
+and then we check if the code is not overfittiing and it works !!!
+
+from sklearn.ensemble import BaggingClassifier 
+
+then we use ->
+bagging_classifier = BaggingClassifier(base_classifier,n_estimators=101,random_state=42, n_jobs=-1)
+Explanation ->
+BaggingClassifier is an ensemble method that creates many copies of a base model (here called base_classifier), trains each on random subsets of the data, and combines their predictions to improve accuracy and reduce overfitting.
+base_classifier: The model you want to bag (e.g., a decision tree).
+n_estimators=101: Number of base models (estimators) to train and aggregate — here, 101 trees/models.(use odd number to avoid ties in mode value)
+random_state=42: Fixes the randomness for reproducibility.
+n_jobs=-1: Uses all available CPU cores for parallel training to speed up computation.
+
+Random Forest -> mutiple decision trees ->
+from sklearn.ensemble import RandomForestClassifier
+
+model = RandomForestClassifier(
+    n_estimators=100,
+    max_depth=None,
+    min_samples_split=2,
+    min_samples_leaf=1,
+    max_features='auto',
+    bootstrap=True,
+    random_state=42,
+    n_jobs=-1
+)
+
+Explanation of each attribute ->
+n_estimators      : Number of trees in the forest. More trees usually improve performance but increase computation time.
+max_depth         : Maximum depth of each tree. Limits how deep each tree can grow to prevent overfitting.
+min_samples_split : Minimum number of samples required to split an internal node. Higher values make the tree more conservative.
+min_samples_leaf  : Minimum number of samples required to be at a leaf node. Helps smooth the model.
+max_features      : Number of features to consider when looking for the best split. Controls randomness and diversity among trees.
+bootstrap         : Whether to use bootstrap samples (sampling with replacement) when building trees. Typically True.(automatically set to true)
+random_state      : Fixes randomness to ensure reproducible results.
+n_jobs            : Number of CPU cores to use (-1 means use all cores for parallel training).
+
+Difference between BaggingClassifier and RandomForestClassifier -> Random forest selects only few features(subsets) and works on them.
+where as in bagging we have to mention it to select random features in the attributes.
+
+2 key features of RandomForest which are not part of the decision tree ->
+
+
