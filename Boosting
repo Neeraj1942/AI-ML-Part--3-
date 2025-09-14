@@ -1,0 +1,48 @@
+Boosting -> ( keeps learning from the errors)(combine mutiplie weak learner to form a strong learner)
+is an ensemble technique that combines multiple weak learners sequentially, where each new model focuses on correcting the errors of the previous ones to improve overall performance
+
+Ensemble -> heterogenous ->
+1. Voting
+2. Stacking
+3. Blending
+
+Decision tree stump -> 1 decision node and 2 leaf nodes
+Primary focus of boosting is on the training set not on the validation set.(reduce bias)(they are prove to overfitting)
+Popular boosting algo's - > 1. Adaboost, 2. Gradient Boost, 3. XGBoost, 4. LightBGM, 5. Catboost
+
+Adaboost ( adaptive boosting) ->
+We use the wrongly outputed weights to calculate the error.
+Alpha(a) = 1/2 * Log((1-e)/e)   ( i.e in our first case epsilon(e) = 0.2)  ( i.e here the log is base 'e' )
+
+Stage 2 -> (Upvoting the misclassified records)
+W(new,correct) = W(old) * e^(-a)
+W(new,wrong)   = W(new) * e^(a)
+
+after using this method to find the weights -> we use to find the normalized weights (by dividing each by the sum of the weights)
+
+Then we do the same for the rest cases, mainly focussing the parts which where predicted wrong in the particular cases.
+
+Then finally we use the formula ->
+Final prediction = sign * a1 + sign * a2 + sign * a3 ( sign = -1 for no , +1 for yes)
+
+Steps taken ->
+1. Equal Weight Assignment
+2. Best Stump Identification
+3. Alpha and Epsilon Calculation
+4. Weight Normalization ( to one)( meaning dividing the all the by the sum of the weights)
+5. Repeat 3 and 4 until the decided number of estimators
+6. Aggregate the predictions to obtain final predictions
+
+from sklearn.ensemble import AdaboostClassifier
+x= AdaboostClassifier(random_state =42)
+x.fit(x_train,y_train)
+
+from sklearn.tree import DesicionTreeClassifier
+ada_boost_dt = AdaboostClassifier( estimator = DesicionTreeClassifier(max_depth=5, random_state=42), n_estimators=100, random_state=42)
+
+we also of some thing called, 
+learning_rate = 0.2 -> which helps to avoid overfitting because ->
+Controls how much each weak learner (tree) contributes to the final model.
+Lower values → smaller steps → more gradual learning.
+Higher values → bigger steps → faster learning but risk of overfitting.
+
