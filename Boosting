@@ -11,6 +11,7 @@ Primary focus of boosting is on the training set not on the validation set.(redu
 Popular boosting algo's - > 1. Adaboost, 2. Gradient Boost, 3. XGBoost, 4. LightBGM, 5. Catboost
 
 Adaboost ( adaptive boosting) ->
+(for both classification and regression model, but firstly developed for CLASSIFICATION model)
 We use the wrongly outputed weights to calculate the error.
 Alpha(a) = 1/2 * Log((1-e)/e)   ( i.e in our first case epsilon(e) = 0.2)  ( i.e here the log is base 'e' )
 
@@ -45,4 +46,117 @@ learning_rate = 0.2 -> which helps to avoid overfitting because ->
 Controls how much each weak learner (tree) contributes to the final model.
 Lower values → smaller steps → more gradual learning.
 Higher values → bigger steps → faster learning but risk of overfitting.
+
+Note : We can use custom estimator = DesicionTreeClassifier/Regressor -> 
+because AdaboostRegressor already uses decision tree model, so we can mention estimator=DesicionTreeRegressor()
+
+Gradient Boosting Machines(GBM) -> 
+(for both classification and regression model, but firstly developed for REGRESSION model)
+Is a method where trees are sequentially added to the model, each tree learning from the previous ensemble model.
+Steps ->
+1. Finding the mean of the actual output coloumn.
+2. Then we calculate loss/residual from the mean
+3. Training the model
+4. Update the predictions
+
+Example used ->
+1.	Start with prediction = 1075 for all SKUs.(mean)
+2.	Residual = Actual – Prediction.
+3.	Update = Learning rate (0.8) × Residual.
+4.	New prediction = Old prediction + Update.
+5.	This moves predictions closer to the actuals.
+	•	Example SKU1001: Residual = 25 → Update = 20 → New prediction = 1095.
+
+from sklearn.ensemble import GradientBoostRegressor ->
+gradient_boosting_regressor = GradientBoostingRegressor(max_depth=9, min_samples_leaf=30,
+    n_estimators=50, random_state=42)
+
+Note : we do not use a custom estimator = DesicionTreeClassifier/Regressor -> 
+because GradientBoostingRegressor already uses decision tree model, so we cannot mention estimator=DesicionTreeRegressor()
+already uses it.
+
+
+XGBoost (eXtreme Gradient Boosting) ->
+Code :
+import xgboost as xgb
+
+from xgboost import XGBClassifier, XGBRegressor
+
+# Create an XGBoost classifier and specify the hyperparameters
+xgboost_classifier = xgb.XGBClassifier()
+
+# Fit the XGBoost classifier on the training data
+xgboost_classifier.fit(X_train, y_train)
+
+XGBoost -> is a highly optimized version of gradient boosting.
+1. Best in kaggle competitions
+2. Stands out for andvanced handling of sparse dataand its build in validation.
+3. prevents overfitting and imporves model generalization
+with the integration of L1(lasso) and L2(ridge) regularization techniques.
+
+
+LightGBM ( Light Gradient Boosting Machine) ->
+Uses ->
+1. Optimized for light memory usage and swift computation
+2. Uses histogram based fitting for quicker calculations
+
+Code ->
+!pip install lightgbm
+
+from lightgbm import LGBMClassifier
+
+# Create an LGBM classifier
+lgbm_classifier = LGBMClassifier(verbose=0)
+
+verbose = ->
+verbose         value	        Meaning
+0	             Silent        (no output)
+1           (or higher)	     Print training progress info
+
+# Fit the LGBM classifier on the training data
+lgbm_classifier.fit(X_train, y_train, eval_set=[(X_validation, y_validation)])
+
+Explanation ->
+What if you don’t specify eval_set?
+The model only trains on the training data without any intermediate validation check.
+You won’t get feedback on how it’s doing on unseen data during training.
+Early stopping won’t work because there’s no validation data to evaluate.
+
+
+CatBoost (categorical Boosting)->
+1. Introduced by Yandex, excels in handling categorical data effectively.
+2. Automates categorical feature processing.
+
+Means ->
+Categorical features (like "Color" = Red, Blue, Green) must be manually converted into numeric format before training.
+This usually involves:
+✅ Label Encoding (Red → 0, Blue → 1, Green → 2)
+✅ One-Hot Encoding (Creating separate binary columns for each category)
+CatBoost automatically detects and processes categorical features without requiring you to manually encode them.
+
+3. uses symmetrical trees for balanced splits.
+4. Widely used in kaggle for large categorical datasets.
+
+Code ->
+!pip install catboost
+
+from catboost import CatBoostClassifier
+
+# Create a CatBoost classifier
+catboost_classifier = CatBoostClassifier(verbose=False)
+
+Verbose = ->
+Use verbose=True if you want feedback on training progress.
+Use verbose=False if you want to suppress output (clean console or when running many experiments).
+
+# Fit the CatBoost classifier on the training data
+catboost_classifier.fit(X_train, y_train)
+
+
+All the above models in regression looks like ->
+Library	        Regressor Class
+XGBoost	       xgboost.XGBRegressor
+CatBoost	    catboost.CatBoostRegressor
+LightGBM	    lightgbm.LGBMRegressor
+
 
