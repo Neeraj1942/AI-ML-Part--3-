@@ -83,6 +83,31 @@ For a model steps to measure the points to TPR and FPR ->
 3. Calculate the TPR and FPR 
 4. Repeat ; for all the next values
 
-7. Log Loss ->
+7. Log Loss -> the negative average of log of the corrected probabilities of each instance.
+Firstly we consider the corrected probabilities which means, the calcuate the probabilities for class =1.
+then we calculate the log base e of these values, then multiply by negative.
 
- 
+ 8. The formula for Gini coefficient: Gini = 2*AUC – 1 
+The formula for Gini coefficient: Gini = 2*AUC – 1
+Note : Gini coefficient is different from the Gini Index (1- gini) we ecnounter in Decision Trees.
+
+
+
+Regression Metrics ->
+Error -> how far are observed values are from the actual( i.e the line in the graph)
+1. MAE(Mean Absolute Error)         -> MAE=n1​i=1∑n​∣yi​−y^​i​∣
+2. MSE(Mean Square Error)           -> MSE=n1​i=1∑n​(yi​−y^​i​)2
+3. RMSE(Root Mean Square Error)     -> RMSE=n1​i=1∑n​(yi​−y^​i​)2
+4. RMSLE(Root Mean Square Log Error)-> RMSLE=n1​i=1∑n​(log(1+y^​i​)−log(1+yi​))2
+5. R2                               -> R2=1−∑(yi​−yˉ​)2∑(yi​−y^​i​)2​  -> higher then better the model performance
+| Symbol      | Meaning                             |
+| ----------- | ----------------------------------- |
+| y_i      | Actual value for the i-th sample    |
+| hat{y}_i | Predicted value for the i-th sample |
+| bar{y}   | Mean of actual values               |
+| n        | Number of observations (samples)    |
+
+6. Adjusted R2                      -> Adjusted R2=1−(1−R2)⋅n−k−1n−1​  -> lower then better the model performance
+-> Adjusts R² for the number of predictors (k) and samples (n)
+-> Penalizes adding irrelevant features
+
