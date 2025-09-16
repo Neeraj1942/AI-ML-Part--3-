@@ -111,3 +111,6 @@ Error -> how far are observed values are from the actual( i.e the line in the gr
 -> Adjusts R² for the number of predictors (k) and samples (n)
 -> Penalizes adding irrelevant features
 
+
+Note : On the addition of new features, R-squared either increases or remains the same, it never decreases
+Note : Adjusted R-squared,evaluation metric takes into account the number of features from the dataset
