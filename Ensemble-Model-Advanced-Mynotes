@@ -1,2 +1,138 @@
 Techniques used in Ensemble Models ->
-1.
+1. Max Voting ->
+This used 3 similar models , train_x and test_x (independent) , test_y,train_y ( target) 
+
+Code ->
+import numpy as np
+from statistics import mode
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+
+# Define models
+model1 = DecisionTreeClassifier()
+model2 = KNeighborsClassifier()
+model3 = LogisticRegression()
+
+# Train models
+model1.fit(x_train, y_train)
+model2.fit(x_train, y_train)
+model3.fit(x_train, y_train)
+
+# Make predictions
+pred1 = model1.predict(x_test)
+pred2 = model2.predict(x_test)
+pred3 = model3.predict(x_test)
+
+# Majority voting
+final_pred = []
+for i in range(len(x_test)):
+    final_pred.append(mode([pred1[i], pred2[i], pred3[i]]))
+
+final_pred = np.array(final_pred)
+
+
+Another type ->
+Voting Classifier -> (another use case but here we use VotingClassifier)
+
+from sklearn.ensemble import VotingClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn import tree
+
+model1 = LogisticRegression(random_state=1)
+model2 = tree.DecisionTreeClassifier(random_state=1)
+
+model = VotingClassifier(estimators=[('lr', model1), ('dt', model2)], voting='hard')
+
+model.fit(x_train, y_train)
+score = model.score(x_test, y_test)
+print("Accuracy:", score)
+
+Type	            What it uses	                                How it decides
+Hard          Voting	Class labels (e.g., 0, 1)	                Majority wins
+Soft         Voting	Class probabilities (e.g., 0.7, 0.3)     Averages probabilities, picks highest ( the average is calulated the closet wins)
+
+
+
+2. Averaging -> Straight method just calculating the net average of all the models being used.
+
+Code ->
+# Define models
+model1 = DecisionTreeClassifier()
+model2 = KNeighborsClassifier()
+model3 = LogisticRegression()
+
+# Train models
+model1.fit(x_train, y_train)
+model2.fit(x_train, y_train)
+model3.fit(x_train, y_train)
+
+# Make predictions
+pred1 = model1.predict(x_test)
+pred2 = model2.predict(x_test)
+pred3 = model3.predict(x_test)
+
+finalpred = (pred1+pred2+pred3)/3
+
+ we can use classfication types - > soft voting ->
+model = VotingClassifier(estimators=[('lr', model1), ('dt', model2)], voting='soft')
+
+
+3. Weighted Averages -> As the name suggest its literally average based on weights
+If the weights are 0.2,0.3,0.5 respectively for w1,w2 and w3->
+w1 + w2 + w3 = 0.2 + 0.3 + 0.5 =1 (should be equal to one)
+Code ->
+# Define models
+model1 = DecisionTreeClassifier()
+model2 = KNeighborsClassifier()
+model3 = LogisticRegression()
+
+# Train models
+model1.fit(x_train, y_train)
+model2.fit(x_train, y_train)
+model3.fit(x_train, y_train)
+
+# Make predictions
+pred1 = model1.predict(x_test)
+pred2 = model2.predict(x_test)
+pred3 = model3.predict(x_test)
+
+finalpred = pred1* 0.2 + pred2* 0.3 + pred3* 0.5
+
+
+
+Advanced Ensemble Techniques ->
+
+1.Stacking ->
+First we use n(i.e 3 - knn, logistic, decision tree), then we use these 3 models to get prediction then use the prediction outcomes and build another model, then use the created 
+new model to generate the final predictions.
+
+Standard scaler, we use this so that the ->
+Each feature’s values are centered around 0.
+Each feature’s values are scaled so the spread (standard deviation) is 1.
+This makes features comparable and helps many ML algorithms perform better.
+
+in our case the knn, logistic classifications , might get effected by higher values and show effect on the prediction so to cut that we use, standard scaler.
+
+Code to do this scaling - >
+--->
+#Feature Scaling
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+scaler.fit(X=train_x)
+
+train_x = scaler.transform(train_x)
+test_x = scaler.transform(test_x)
+
+Note : Pass the data directly as the first positional argument:
+scaler.fit(train_x)
+Or explicitly specify the argument name:
+scaler.fit(X=train_x)
+
+the nwe create 2 data sets for train and test respectively using the 3 classifiers , 
+and then use those to fit them in a third model (i.e logistic regression in our case ) and then we predict the scores to check the accuracy.
+
+Now variants stacking ->
+so if we have 10 datasets -> then we should use 9 each and then predict on the rest one case and create 10 models like that.
+Then we use the all 10 datasets models we created to then make one more 11 models to finally test on the test data.
