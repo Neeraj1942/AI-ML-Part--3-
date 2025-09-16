@@ -135,4 +135,60 @@ and then use those to fit them in a third model (i.e logistic regression in our 
 
 Now variants stacking ->
 so if we have 10 datasets -> then we should use 9 each and then predict on the rest one case and create 10 models like that.
-Then we use the all 10 datasets models we created to then make one more 11 models to finally test on the test data.
+Then we use the all 10 datasets( intial together) models we created to then make one more 11 models to finally test on the test dataset.
+
+Now we use the all the 3 models train dataset , then use the test data set all the new train and test dataset.
+Then we use those to final predictions.
+
+we can use multiple models and put in between different datasets. 
+
+They main uses of stacking are ->
+1. Use given features with the new predictions features.
+2. Generate multiple predictions for test and average.
+3. Inrease the number of levels for stacking the models.
+
+Blending -> we create a validation set , train set , then we use these and then make a model and do ther predictions.
+code ->
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+import pandas as pd
+
+model1 = DecisionTreeClassifier()
+model1.fit(x_train, y_train)
+
+val_pred1 = model1.predict(x_val)
+test_pred1 = model1.predict(x_test)
+
+val_pred1 = pd.DataFrame(val_pred1)
+test_pred1 = pd.DataFrame(test_pred1)
+
+model2 = KNeighborsClassifier()
+model2.fit(x_train, y_train)
+
+val_pred2 = model2.predict(x_val)
+test_pred2 = model2.predict(x_test)
+
+val_pred2 = pd.DataFrame(val_pred2)
+test_pred2 = pd.DataFrame(test_pred2)
+
+df_val = pd.concat([x_val, val_pred1, val_pred2], axis=1)
+df_test = pd.concat([x_test, test_pred1, test_pred2], axis=1)
+
+model = LogisticRegression()
+model.fit(df_val, y_val)
+model.score(df_test, y_test)
+
+
+score(grouth truth, prections)
+mse ( prediction,grouth truth) 
+
+Bootstrapping ->
+What it is:
+A resampling technique where you create multiple datasets by sampling with replacement from your original data.
+
+How it works:
+Each new dataset (called a bootstrap sample) is used to train a model. The models are then combined (e.g., by averaging) to improve stability and reduce variance.
+
+
+
