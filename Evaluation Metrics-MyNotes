@@ -107,7 +107,7 @@ Error -> how far are observed values are from the actual( i.e the line in the gr
 | bar{y}   | Mean of actual values               |
 | n        | Number of observations (samples)    |
 
-6. Adjusted R2                      -> Adjusted R2=1−(1−R2)⋅n−k−1n−1​  -> lower then better the model performance
+6. Adjusted R2                      -> Adjusted R2=1−(1−R2)⋅n−k−1n−1​  -> higher then better the model performance
 -> Adjusts R² for the number of predictors (k) and samples (n)
 -> Penalizes adding irrelevant features
 
